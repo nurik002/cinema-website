@@ -1,0 +1,47 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Register for an account" %}{% endblock %}
+
+
+{% block content %}
+    <form class="sign__form" method="post">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <div class="sign__btn" style="color: white" role="alert">
+                <span class="sing_text"><a href="">{{ error }}</a></span>
+            </div>
+        {% endfor %}
+
+        <span class="sing_text"><a href="">{{ form.errors }}</a></span>
+        <a href="index.html" class="sign__logo">
+            <img src="{% static 'img/logo.svg' %}" alt="">
+        </a>
+
+        <div class="sign__group">
+            <input type="text" name="username" class="sign__input" placeholder="{% trans 'Your name' %}">
+        </div>
+
+        <div class="sign__group">
+            <input type="text" name="email" class="sign__input" placeholder="Email">
+        </div>
+
+        <div class="sign__group">
+            <input type="password" name="password1" class="sign__input" placeholder="{% trans 'Password' %}">
+        </div>
+
+        <div class="sign__group">
+            <input type="password" name="password2" class="sign__input"
+                   placeholder="{% trans 'Repeat your password' %}">
+        </div>
+
+        <div class="sign__group sign__group--checkbox">
+            <input id="remember" name="remember" type="checkbox" checked="checked">
+            <label for="remember">I agree to the <a href="#">Privacy Policy</a></label>
+        </div>
+
+        <button class="sign__btn" type="submit">Sign up</button>
+
+        <span class="sign__text">Already have an account? <a href="{% url 'auth_login' %}">Sign in!</a></span>
+    </form>
+{% endblock %}

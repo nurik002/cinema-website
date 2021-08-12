@@ -1,0 +1,508 @@
+{% extends 'Layout/base.html' %}
+{% load static %}
+{% load custom %}
+{% block title %}
+    Series-Detail
+{% endblock %}
+
+{% block content %}
+    <!-- details -->
+    <section class="section details">
+        <!-- details background -->
+        <div class="details__bg" data-bg="{% static 'img/home/home__bg.jpg' %}"></div>
+        <!-- end details background -->
+
+        <!-- details content -->
+        <div class="container">
+            <div class="row">
+                <!-- title -->
+                <div class="col-12">
+                    <h1 class="details__title">{{ object.title }}</h1>
+                </div>
+                <!-- end title -->
+
+                <!-- content -->
+                <div class="col-10">
+                    <div class="card card--details card--series">
+                        <div class="row">
+                            <!-- card cover -->
+                            <div class="col-12 col-sm-4 col-md-4 col-lg-3 col-xl-3">
+                                <div class="card__cover">
+                                    <img src="{{ object.cover.url }}" alt="">
+                                </div>
+                            </div>
+                            <!-- end card cover -->
+
+                            <!-- card content -->
+                            <div class="col-12 col-sm-8 col-md-8 col-lg-9 col-xl-9">
+                                <div class="card__content">
+                                    <div class="card__wrap">
+                                        <span class="card__rate"><i class="icon ion-ios-star"></i>8.4</span>
+
+                                        <ul class="card__list">
+                                            <li>{{ object.quality }}</li>
+                                            <li>{{ object.recommended_age }}+</li>
+                                        </ul>
+                                    </div>
+
+                                    <ul class="card__meta">
+                                        <li><span>Genre:</span>
+                                            {% for genre in object.genre.all %}
+                                                <a href="#">{{ genre.title }}</a>
+                                            {% endfor %}
+
+                                        </li>
+                                        <li><span>Release year:</span>{{ object.release_year }}</li>
+                                        <li><span>Country:</span> <a href="#">{{ object.country }}</a></li>
+                                    </ul>
+
+                                    <div class="card__description card__description--details">
+                                        {{ object.description|safe }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card content -->
+                        </div>
+                    </div>
+                </div>
+                <!-- end content -->
+
+                <!-- player -->
+                <div class="col-12 col-xl-6">
+                    <video controls crossorigin playsinline id="player">
+                        <!-- Video files -->
+                        <source src="{% get_series_chapter request object %}"
+                                type="video/mp4">
+
+                    </video>
+                </div>
+                <!-- end player -->
+
+                <!-- accordion -->
+                <div class="col-12 col-xl-6">
+                    <div class="accordion" id="accordion">
+                        {% for season in object.season.all %}
+                            <div class="accordion__card">
+                                <div class="card-header" id="heading{% cycle 'One' 'Two' 'Three' 'Four' %}">
+                                    <button type="button" data-toggle="collapseOne"
+                                            data-target="#collapse{% cycle 'One' 'Two' 'Three' 'Four' %}"
+                                            aria-expanded="true"
+                                            aria-controls="collapse{% cycle 'One' 'Two' 'Three' 'Four' %}">
+                                        <span>Season: {{ forloop.counter }}</span>
+                                        <span>22 Episodes from Nov, 2004 until May, 2005</span>
+                                    </button>
+                                </div>
+
+                                <div id="collapse{% cycle 'One' 'Two' 'Three' 'Four' %}" class="collapse show"
+                                     aria-labelledby="heading{% cycle 'One' 'Two' 'Three' 'Four' %}"
+                                     data-parent="#accordion">
+                                    <div class="card-body">
+                                        <table class="accordion__list">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Title</th>
+                                                <th>Air Date</th>
+                                            </tr>
+                                            </thead>
+
+                                            <tbody>
+                                            {% for video in season.videos.all %}
+                                                <tr>
+                                                    <th>{{ forloop.counter }}</th>
+                                                    <td>{{ video.title }}</td>
+                                                    <td>{{ video.created_at }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <!-- end accordion -->
+                <div class="row" style="margin-top: 40px">
+                    {% for season in object.season.all %}
+                        {% for chapter in season.videos.all %}
+                            <!-- card -->
+                            <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                <div class="card">
+                                    <div class="card__cover">
+                                            <img src="{{ chapter.cover.url }}" alt="">
+                                        <a href="{% url 'movie:series-detail' pk=object.pk %}?season={{ chapter.season.pk }}&chapter={{ chapter.pk }}" class="card__play">
+                                            <i class="icon ion-ios-play"></i>
+                                        </a>
+                                    </div>
+                                    <div class="card__content">
+                                        <h3 class="card__title">
+                                            <a href="{% url 'movie:series-detail' pk=object.pk %}?season={{ chapter.season.pk }}&chapter={{ chapter.pk }}">
+                                                (Season {{ chapter.season.season }}) {{ chapter.title }}
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card -->
+                        {% endfor %}
+                    {% endfor %}
+
+                </div>
+
+                <div class="col-12">
+                    <div class="details__wrap">
+                        <!-- availables -->
+                        <div class="details__devices">
+                            <span class="details__devices-title">Available on devices:</span>
+                            <ul class="details__devices-list">
+                                <li><i class="icon ion-logo-apple"></i><span>IOS</span></li>
+                                <li><i class="icon ion-logo-android"></i><span>Android</span></li>
+                                <li><i class="icon ion-logo-windows"></i><span>Windows</span></li>
+                                <li><i class="icon ion-md-tv"></i><span>Smart TV</span></li>
+                            </ul>
+                        </div>
+                        <!-- end availables -->
+
+                        <!-- share -->
+                        <div class="details__share">
+                            <span class="details__share-title">Share with friends:</span>
+
+                            <ul class="details__share-list">
+                                <li class="facebook"><a href="#"><i class="icon ion-logo-facebook"></i></a></li>
+                                <li class="instagram"><a href="#"><i class="icon ion-logo-instagram"></i></a></li>
+                                <li class="twitter"><a href="#"><i class="icon ion-logo-twitter"></i></a></li>
+                                <li class="vk"><a href="#"><i class="icon ion-logo-vk"></i></a></li>
+                            </ul>
+                        </div>
+                        <!-- end share -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end details content -->
+    </section>
+    <!-- end details -->
+
+    <!-- content -->
+    <section class="content">
+        <div class="content__head">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- content title -->
+                        <h2 class="content__title">Discover</h2>
+                        <!-- end content title -->
+
+                        <!-- content tabs nav -->
+                        <ul class="nav nav-tabs content__tabs" id="content__tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab-1" role="tab"
+                                   aria-controls="tab-1"
+                                   aria-selected="true">Comments</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-2" role="tab" aria-controls="tab-2"
+                                   aria-selected="false">Reviews</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-3" role="tab" aria-controls="tab-3"
+                                   aria-selected="false">Photos</a>
+                            </li>
+                        </ul>
+                        <!-- end content tabs nav -->
+
+                        <!-- content mobile tabs nav -->
+                        <div class="content__mobile-tabs" id="content__mobile-tabs">
+                            <div class="content__mobile-tabs-btn dropdown-toggle" role="navigation" id="mobile-tabs"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <input type="button" value="Comments">
+                                <span></span>
+                            </div>
+
+                            <div class="content__mobile-tabs-menu dropdown-menu" aria-labelledby="mobile-tabs">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item"><a class="nav-link active" id="1-tab" data-toggle="tab"
+                                                            href="#tab-1" role="tab" aria-controls="tab-1"
+                                                            aria-selected="true">Comments</a></li>
+
+                                    <li class="nav-item"><a class="nav-link" id="2-tab" data-toggle="tab" href="#tab-2"
+                                                            role="tab" aria-controls="tab-2"
+                                                            aria-selected="false">Reviews</a></li>
+
+                                    <li class="nav-item"><a class="nav-link" id="3-tab" data-toggle="tab" href="#tab-3"
+                                                            role="tab" aria-controls="tab-3"
+                                                            aria-selected="false">Photos</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end content mobile tabs nav -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-8 col-xl-8">
+                    <!-- content tabs -->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="1-tab">
+                            <div class="row">
+                                <!-- comments -->
+                                <div class="col-12">
+                                    <div class="comments">
+                                        <ul class="comments__list">
+                                            {% for comment in object.get_series_comments %}
+                                                <li class="comments__item">
+                                                    <div class="comments__autor">
+                                                        <img class="comments__avatar" src="{% static 'img/user.png' %}"
+                                                             alt="">
+                                                        <span class="comments__name">{{ comment.user }}</span>
+                                                        <span class="comments__time">{{ comment.created_at|date:'t.m.Y,  H:i' }} </span>
+                                                    </div>
+                                                    <p class="comments__text">{{ comment.text }}</p>
+                                                    <div class="comments__actions">
+                                                        <div class="comments__rate">
+                                                            <form action="{% url 'review:series-liked' %}?next={{ request.path }}?{{ request.GET.urlencode }}#comments"
+                                                                  method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="comments_id"
+                                                                       value="{{ comment.pk }}">
+                                                                <button type="submit">
+                                                                    <i class="icon ion-md-thumbs-up"></i>{{ comment.liked.all.count }}
+                                                                </button>
+                                                            </form>
+                                                            |||||
+                                                            <form action="">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="comments_id"
+                                                                       value="{{ comment.pk }}">
+                                                                <button type="button"><span
+                                                                        style="margin-left: 5px">{{ comment.liked.all.count }}</span>
+                                                                    <i class="icon ion-md-thumbs-down"
+                                                                       style="margin-left: 10px"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+
+                                                        <button type="button"><i class="icon ion-ios-share-alt"></i>Reply
+                                                        </button>
+                                                        <button type="button"><i class="icon ion-ios-quote"></i>Quote
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+
+                                        <form method="POST" action="{% url 'review:series-comment' pk=object.pk %}" class="form">
+                                            {% csrf_token %}
+                                            <textarea id="text" name="text" class="form__textarea"
+                                                      placeholder="Add comment"></textarea>
+                                            <button type="submit" class="form__btn">Send</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- end comments -->
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="2-tab">
+                            <div class="row">
+                                <!-- reviews -->
+                                <div class="col-12">
+                                    <div class="reviews">
+                                        <ul class="reviews__list">
+                                            <li class="reviews__item">
+                                                <div class="reviews__autor">
+                                                    <img class="reviews__avatar" src="img/user.png" alt="">
+                                                    <span class="reviews__name">Best Marvel movie in my opinion</span>
+                                                    <span class="reviews__time">24.08.2018, 17:53 by John Doe</span>
+
+                                                    <span class="reviews__rating"><i
+                                                            class="icon ion-ios-star"></i>8.4</span>
+                                                </div>
+                                                <p class="reviews__text">There are many variations of passages of Lorem
+                                                    Ipsum available, but the majority have suffered alteration in some
+                                                    form,
+                                                    by injected humour, or randomised words which don't look even
+                                                    slightly
+                                                    believable. If you are going to use a passage of Lorem Ipsum, you
+                                                    need
+                                                    to be sure there isn't anything embarrassing hidden in the middle of
+                                                    text.</p>
+                                            </li>
+
+                                            <li class="reviews__item">
+                                                <div class="reviews__autor">
+                                                    <img class="reviews__avatar" src="img/user.png" alt="">
+                                                    <span class="reviews__name">Best Marvel movie in my opinion</span>
+                                                    <span class="reviews__time">24.08.2018, 17:53 by John Doe</span>
+
+                                                    <span class="reviews__rating"><i
+                                                            class="icon ion-ios-star"></i>9.0</span>
+                                                </div>
+                                                <p class="reviews__text">There are many variations of passages of Lorem
+                                                    Ipsum available, but the majority have suffered alteration in some
+                                                    form,
+                                                    by injected humour, or randomised words which don't look even
+                                                    slightly
+                                                    believable. If you are going to use a passage of Lorem Ipsum, you
+                                                    need
+                                                    to be sure there isn't anything embarrassing hidden in the middle of
+                                                    text.</p>
+                                            </li>
+
+                                            <li class="reviews__item">
+                                                <div class="reviews__autor">
+                                                    <img class="reviews__avatar" src="img/user.png" alt="">
+                                                    <span class="reviews__name">Best Marvel movie in my opinion</span>
+                                                    <span class="reviews__time">24.08.2018, 17:53 by John Doe</span>
+
+                                                    <span class="reviews__rating"><i
+                                                            class="icon ion-ios-star"></i>7.5</span>
+                                                </div>
+                                                <p class="reviews__text">There are many variations of passages of Lorem
+                                                    Ipsum available, but the majority have suffered alteration in some
+                                                    form,
+                                                    by injected humour, or randomised words which don't look even
+                                                    slightly
+                                                    believable. If you are going to use a passage of Lorem Ipsum, you
+                                                    need
+                                                    to be sure there isn't anything embarrassing hidden in the middle of
+                                                    text.</p>
+                                            </li>
+                                        </ul>
+
+                                        <form action="#" class="form">
+                                            <input type="text" class="form__input" placeholder="Title">
+                                            <textarea class="form__textarea" placeholder="Review"></textarea>
+                                            <div class="form__slider">
+                                                <div class="form__slider-rating" id="slider__rating"></div>
+                                                <div class="form__slider-value" id="form__slider-value"></div>
+                                            </div>
+                                            <button type="button" class="form__btn">Send</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- end reviews -->
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="3-tab">
+                            <!-- project gallery -->
+                            <div class="gallery" itemscope>
+                                <div class="row">
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-1.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-1.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 1</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-2.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-2.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 2</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-3.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-3.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 3</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-4.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-4.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 4</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-5.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-5.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 5</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+
+                                    <!-- gallery item -->
+                                    <figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope>
+                                        <a href="img/gallery/project-6.jpg" itemprop="contentUrl" data-size="1920x1280">
+                                            <img src="img/gallery/project-6.jpg" itemprop="thumbnail"
+                                                 alt="Image description"/>
+                                        </a>
+                                        <figcaption itemprop="caption description">Some image caption 6</figcaption>
+                                    </figure>
+                                    <!-- end gallery item -->
+                                </div>
+                            </div>
+                            <!-- end project gallery -->
+                        </div>
+                    </div>
+                    <!-- end content tabs -->
+                </div>
+
+                <!-- sidebar -->
+                <div class="col-12 col-lg-4 col-xl-4">
+                    <div class="row">
+                        <!-- section title -->
+                        <div class="col-12">
+                            <h2 class="section__title section__title--sidebar">You may also like...</h2>
+                        </div>
+                        <!-- end section title -->
+
+                        <!-- card -->
+                        {% for film in quality_related %}
+                            <div class="col-6 col-sm-4 col-lg-6">
+                                <div class="card">
+                                    <div class="card__cover">
+                                        <img src="{{ film.cover.url }}" alt="">
+                                        <a href="#" class="card__play">
+                                            <i class="icon ion-ios-play"></i>
+                                        </a>
+                                    </div>
+                                    <div class="card__content">
+                                        <h3 class="card__title"><a href="#">{{ film.title }}</a></h3>
+                                        <span class="card__category">
+										{% for genre in film.genre.alll %}
+                                            <a href="">{{ genre.title }}</a>
+                                        {% endfor %}
+									</span>
+                                        <span class="card__rate"><i class="icon ion-ios-star"></i>8.4</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!-- end card -->
+                    </div>
+                </div>
+                <!-- end sidebar -->
+            </div>
+        </div>
+    </section>
+    <!-- end content -->
+{% endblock %}
+
+

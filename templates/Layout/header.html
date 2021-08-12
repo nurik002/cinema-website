@@ -1,0 +1,92 @@
+{% load static %}
+{% load i18n %}
+<!-- header -->
+<header class="header">
+    <div class="header__wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="header__content">
+                        <!-- header logo -->
+                        <a href="{% url 'movie:home' %}" class="header__logo">
+                            <img src="{% static 'img/logo.svg' %}" alt="">
+                        </a>
+                        <!-- end header logo -->
+
+                        <!-- header nav -->
+                        <ul class="header__nav">
+                            <!-- dropdown -->
+                            <li class="header__nav-item">
+                                <a class="dropdown-toggle header__nav-link" href="{% url 'movie:home' %}">Home</a>
+                            </li>
+                            <!-- end dropdown -->
+                            <!-- dropdown -->
+                            <!-- end dropdown -->
+                            <li class="header__nav-item">
+                                <a class="header__nav-link"
+                                   href="{% url 'movie:catalog' category='series' %}">{% trans 'TV Series' %}
+                                </a>
+                            </li>
+                            <li class="header__nav-item">
+                                <a class="header__nav-link"
+                                   href="{% url 'movie:catalog' category='cartoon' %}">{% trans 'Cartoons' %}
+                                </a>
+                            </li>
+                            <li class="header__nav-item">
+                                <a class="header__nav-link"
+                                   href="{% url 'movie:catalog' category='films' %}">{% trans 'Films' %}
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- end header nav -->
+
+                        <!-- header auth -->
+                        <div class=" header__auth">
+                            <button class="header__search-btn" type="button">
+                                <i class="icon ion-ios-search"></i>
+                            </button>
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'auth_logout' %}" class="header__sign-in">
+                                    <i class="icon ion-ios-log-in"></i>
+                                    <span>logout</span>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'auth_login' %}" class="header__sign-in">
+                                    <i class="icon ion-ios-log-in"></i>
+                                    <span>sign in</span>
+                                </a>
+                            {% endif %}
+
+                        </div>
+                        <!-- end header auth -->
+                        <!-- header menu btn -->
+                        <button class="header__btn" type="button">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <!-- end header menu btn -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- header search -->
+    <form action="" class="header__search" method="get">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="header__search-content">
+                        <input type="text" name="q"
+                               placeholder="Search for a movie, TV Series that you are looking for">
+                        <button type="submit">search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- end header search -->
+</header>
+<!-- end header -->

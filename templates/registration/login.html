@@ -1,0 +1,42 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Log in" %}{% endblock %}
+
+
+
+{% block content %}
+    <form method="post" class="sign__form">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <div class="sign__btn" style="color: white" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ next }}"/>
+        <a href="index.html" class="sign__logo">
+            <img src="{% static 'img/logo.svg' %}" alt="">
+        </a>
+
+        <div class="sign__group">
+            <input type="text" name="username" class="sign__input" placeholder="Your name">
+        </div>
+
+        <div class="sign__group">
+            <input type="password" name="password" class="sign__input" placeholder="Password">
+        </div>
+
+        <div class="sign__group sign__group--checkbox">
+            <input id="remember" name="remember" type="checkbox" checked="checked">
+            <label for="remember">{% trans 'Remember Me' %}</label>
+        </div>
+
+        <button class="sign__btn" type="submit">{% trans 'Sign in' %}</button>
+
+        <span class="sign__text">Don't have an account? <a
+                href="{% url 'registration_register' %}">{% trans 'Sign up!' %}</a></span>
+
+        <span class="sign__text"><a href="{% url 'auth_password_reset' %}">{% trans 'Forgot password?' %}</a></span>
+    </form>
+{% endblock %}
+
